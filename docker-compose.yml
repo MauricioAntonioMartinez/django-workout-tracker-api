@@ -5,8 +5,8 @@ services:
     build:
       context: . # to the current directory
     ports:
-      - "8000:8000"
+      - "9000:9000"
     volumes:
       - ./app:/app #map the current directory to the app in the container
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py runserver 0.0.0.0:9000"
