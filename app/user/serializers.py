@@ -1,7 +1,8 @@
 from django.contrib.auth import authenticate, get_user_model
-# from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
+
+# from django.utils.translation import ugettext_lazy as _
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,6 +26,30 @@ class UserSerializer(serializers.ModelSerializer):
         """create a new user with encripted password and return it
         """
         return get_user_model().objects.create_user(**validated_data)
+
+    def update(self, instance, validated_data):
+        """update a user, setting the password correctly and return it
+
+        Args:
+            instance (model Instance): User Object
+            validated_data (fields): Valid fields   
+
+        Raises:
+            serializers.ValidationError: [description]
+
+        Returns: User
+        """
+        validated_data.pop('email')  # cannot update his email
+        password = validated_data.pop('password', None)
+        # the None is the default value if not exists
+        # the pop is deleting the field password from the dict
+        user = super().update(instance, validated_data)
+        # super to the normal update
+
+        if password:
+            user.set_password(password)
+            user.save()
+        return user
 
 
 class AuthSerializer(serializers.Serializer):
