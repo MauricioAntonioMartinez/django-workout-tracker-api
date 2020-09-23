@@ -1,7 +1,6 @@
+from core.models import Ingredient, Recipe, Tag
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-
-from core.models import Ingredient, Tag, Recipe
 
 
 def sample_user(email='test@test.com', password='test123'):
@@ -64,7 +63,7 @@ class ModelTest(TestCase):
         """
         recipe = Recipe.objects.create(
             user=sample_user(),
-            titile='Salad',
+            title='Salad',
             time_minutes=5,
             price=12.0
         )
