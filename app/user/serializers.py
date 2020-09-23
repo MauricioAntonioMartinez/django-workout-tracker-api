@@ -13,14 +13,17 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('email', 'password', 'name')
         # fields that we want to be able to write and read
         # in the database
+        # read_only_fields = ['email']  # this fields doesn't
+        # take in condiretation for post patch put request
         extra_kwargs = {
             'password': {
                 "write_only": True,
                 "min_length": 5
-            }
+            },
         }
         # this allow us to specify extra arguments or validation
         # that can be accepted in this serializer
+        # the validate foo will be in charge to respect this conditions
 
     def create(self, validated_data):
         """create a new user with encripted password and return it
@@ -31,7 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
         """update a user, setting the password correctly and return it
 
         Args:
-            instance (model Instance): User Object
+            instance (model Instance): User Object Email this case
             validated_data (fields): Valid fields   
 
         Raises:
@@ -39,7 +42,8 @@ class UserSerializer(serializers.ModelSerializer):
 
         Returns: User
         """
-        validated_data.pop('email')  # cannot update his email
+        # print(f'THE DATA {validated_data}')
+        # validated_data.pop('email')  # cannot update his email
         password = validated_data.pop('password', None)
         # the None is the default value if not exists
         # the pop is deleting the field password from the dict
