@@ -1,3 +1,6 @@
+import os
+import uuid
+
 from django.conf import settings  # this is how we can retrive variables
 # for the settings file
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
@@ -6,6 +9,18 @@ from django.db import models
 
 # Maneger User class is the class that provides the creation
 # of user or admin and all methods out of the box
+
+
+def recipe_image_file_path(instance, file_name):
+    """Generate file path for new recipe image
+
+    Args:
+        instance : instance of the current session
+        file_name (str): file name with the extension
+    """
+    ext = file_name.split('.')[-1]  # the last item
+    filename = f'{uuid.uuid4()}.{ext}'
+    return os.path.join('uploads/recipe/', filename)
 
 
 class UserManager(BaseUserManager):
@@ -81,6 +96,9 @@ class Recipe(models.Model):
     link = models.CharField(max_length=255, blank=True)
     ingredients = models.ManyToManyField(Ingredient)
     tags = models.ManyToManyField(Tag)
+    image = models.ImageField(null=True, upload_to=recipe_image_file_path)
+    # pass the reference to the function so when its saved this will call and retrieve
+    # the path, this pass the instance as well
 
     def __str__(self):
         return self.title

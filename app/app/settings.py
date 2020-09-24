@@ -127,6 +127,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+# 127.0.0.1:8000/static/ this will map to the static directory
+# this maps to the public
+MEDIA_URL = '/media/'
+
+
+STATIC_ROOT = '/vol/web/static'
+
+MEDIA_ROOT = '/vol/web/media'  # this is where to store all the media files
 
 AUTH_USER_MODEL = 'core.User'  # this overrides the default
 # user model to the customized one

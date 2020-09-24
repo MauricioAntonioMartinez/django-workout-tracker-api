@@ -3,7 +3,8 @@ from rest_framework import mixins, viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from .serializers import IngredientSerializer, RecipeSerializer, TagSerializer
+from .serializers import (IngredientSerializer, RecipeDetailSerializer,
+                          RecipeSerializer, TagSerializer)
 
 
 class BaseViewSet(viewsets.GenericViewSet, mixins.ListModelMixin,
@@ -46,3 +47,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Retrive the recipes for the authenticated user
         """
         return self.queryset.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        """Return apropiate serializer class
+        """
+        # the retrive is adding the /<pk> to the endpoint
+        print('ACTION !!!', self.action)
+        # depending of the action the serializer may change
+        if self.action == 'retrieve':
+            return RecipeDetailSerializer
+        return self.serializer_class  # the normal serializer class
+
+    def perform_create(self, serializer):
+        """Create a new recipe
+        """
+        # when saving a new object instance
+        serializer.save(user=self.request.user)
