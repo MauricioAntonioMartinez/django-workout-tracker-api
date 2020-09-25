@@ -31,7 +31,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'title', 'time_minutes',
-                  'ingredients', 'link', 'tags', 'price')
+                  'ingredients', 'link', 'tags', 'price',)
         read_only_fields = ('id',)
 
 
@@ -39,8 +39,17 @@ class RecipeDetailSerializer(RecipeSerializer):
     """Serialize a recipe detail
     """
     # this overrides the fields ingredients to not only accept
-    # ids for a given ingredients or tags, 
+    # ids for a given ingredients or tags,
     # serialize all the ingredients and tags fields
     ingredients = IngredientSerializer(many=True, read_only=True)
     # this thing populates the ingredients
     tags = TagSerializer(many=True, read_only=True)
+
+
+class RecipeImageSerializer(serializers.ModelSerializer):
+    """Serializer to uploading images to recipes
+    """
+    class Meta:
+        model = Recipe
+        fields = ('id', 'image')
+        read_only_fields = ('id',)
