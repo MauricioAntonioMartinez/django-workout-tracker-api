@@ -32,7 +32,7 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(models.User, UserAdmin)
-admin.site.register(models.Tag)
-admin.site.register(models.Ingredient)
-admin.site.register(models.Recipe)
-# register the modified user admin
+admin.site.register(models.Exercise)
+admin.site.register(models.Set)
+admin.site.register(models.Workout)
+admin.site.register(models.Serie)

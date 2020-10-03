@@ -6,6 +6,7 @@ from django.conf import settings  # this is how we can retrive variables
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 # Maneger User class is the class that provides the creation
 # of user or admin and all methods out of the box
@@ -61,44 +62,51 @@ class User(AbstractBaseUser, PermissionsMixin):  # this classes provides
     USERNAME_FIELD = 'email'
 
 
-class Tag(models.Model):
-    """Tag to be used for a recipie
-    """
-    name = models.CharField(max_length=255)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-
-
-class Ingredient(models.Model):
-    """Ingredient to be used in a recipe
-    """
-    name = models.CharField(max_length=255)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-
-
-class Recipe(models.Model):
-    """Recipe object
-    """
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
+class Exercise(models.Model):
+    DIFFICULTY_CHOICES = (
+        (1, 'EASY'),
+        (2, 'NORMAL'),
+        (3, 'HARD'),
+        (4, 'PRO'),
     )
-    title = models.CharField(max_length=255)
-    time_minutes = models.IntegerField()
-    price = models.DecimalField(max_digits=5, decimal_places=2)
-    link = models.CharField(max_length=255, blank=True)
-    ingredients = models.ManyToManyField(Ingredient)
-    tags = models.ManyToManyField(Tag)
-    image = models.ImageField(null=True, upload_to=recipe_image_file_path)
-    # pass the reference to the function so when its saved this will call and retrieve
-    # the path, this pass the instance as well
 
-    def __str__(self):
-        return self.title
+    BODY_PAT_CHOICES = (
+        (1, 'CHEST'),
+        (2, 'BICEP'),
+        (3, 'CALFS'),
+        (4, 'HASTRINGS'),
+        (5, 'QUADRICEPS'),
+        (6, 'TRICEPS'),
+    )
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    body_part = models.IntegerField(choices=BODY_PAT_CHOICES)
+    difficulty = models.IntegerField(choices=DIFFICULTY_CHOICES)
+    notes = models.TextField(max_length=500, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Serie(models.Model):
+    reps = models.IntegerField(default=0)
+    weight = models.FloatField(default=0.0)
+    comment = models.TextField(blank=True)
+    father_set = models.ForeignKey(
+        'Set', on_delete=models.CASCADE, related_name='series')
+
+
+class Set(models.Model):
+    exercise = models.ForeignKey(
+        'Exercise', on_delete=models.CASCADE)
+    work_out = models.ForeignKey('WorkOut', on_delete=models.CASCADE)
+
+
+class Workout(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    workout_date = models.DateField(unique=True)
+    sets = models.ManyToManyField('Exercise', through=Set, blank=True)
+
+    class Meta:
+        ordering = ['workout_date']

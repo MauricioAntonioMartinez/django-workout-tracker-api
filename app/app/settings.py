@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'workout',
     'core',
     'user',
     'exercise',
@@ -138,3 +139,6 @@ MEDIA_ROOT = '/vol/web/media'  # this is where to store all the media files
 
 AUTH_USER_MODEL = 'core.User'  # this overrides the default
 # user model to the customized one
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
