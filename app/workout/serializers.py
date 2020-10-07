@@ -34,6 +34,7 @@ class SetSerializer(serializers.ModelSerializer):
         model = Set
         fields = ['id', 'exercise', 'series']
         read_only_fields = ('id',)
+
         extra_keyargs = {
             "exercise": {
                 "write_only": True

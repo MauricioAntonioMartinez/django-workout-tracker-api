@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
 from .serializers import ExerciseSerializer
 
 
@@ -23,26 +24,40 @@ class Auth(viewsets.ModelViewSet):
 
 
 class ExerciseSearch(generics.ListAPIView, viewsets.ViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
     orderin_fields = ['created_at']
 
-    # def get_queryset(self):
-    #     return self.queryset.filter(user=self.request.user)
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
 
 
 class ExerciseViewSet(Auth):
     serializer_class = ExerciseSerializer
     queryset = Exercise.objects.all()
+    body_parts = Exercise._meta.get_field('body_part').choices
+    difficulties = Exercise._meta.get_field('difficulty').choices
 
     @action(methods=['get'], url_path='details', detail=False)
     def get_exercise_details(self, request):
-        body_parts = Exercise._meta.get_field('body_part').choices
-        difficulties = Exercise._meta.get_field('difficulty').choices
-        return Response({"body_parts": body_parts,
-                         "difficuties": difficulties}, status.HTTP_200_OK)
+        return Response({"body_parts": self.body_parts,
+                         "difficuties": self.difficulties}, status.HTTP_200_OK)
+
+    def get_queryset(self):
+        body_part = self.request.query_params.get('body_part')
+        difficulty = self.request.query_params.get('difficulty')
+        queryset = self.queryset.filter(user=self.request.user)
+        if body_part:
+            bp = [bd[0] for bd in self.body_parts if bd[1] == body_part][0]
+            queryset = queryset.filter(body_part=bp)
+        if difficulty:
+            df = [df[0] for df in self.difficulties if df[1] == difficulty][0]
+            queryset = queryset.filter(difficulty=df)
+        return queryset
 
     # class BaseViewSet(viewsets.GenericViewSet, mixins.ListModelMixin,
     #                   mixins.CreateModelMixin):

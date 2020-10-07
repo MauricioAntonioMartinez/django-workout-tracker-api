@@ -27,20 +27,22 @@ WORKDIR /app
 COPY ./app /app
 
 # this way we can set a fold that contains all the images, therefor we can share across containers
-# -p stands for creating the folders if not exsits
-RUN mkdir -p /vol/web/media 
+# # -p stands for creating the folders if not exsits
+# RUN mkdir -p /vol/web/media 
 
-RUN mkdir -p /vol/web/static
+# RUN mkdir -p /vol/web/static
 
-RUN adduser -D user
-# create a user for running our process
+# RUN adduser -D user
 
-# sets the owner ship to all the subdirectorys of the vol folder to the custom user
-# -R stands for recursive for all subdirectorys
-RUN chown -R user:user /vol/
+# RUN chown user:user -R /app/   
+# # create a user for running our process
 
-# sets permissions to  the user that can read and write
-RUN chmod -R 755 /vol/web
+# # sets the owner ship to all the subdirectorys of the vol folder to the custom user
+# # -R stands for recursive for all subdirectorys
+# RUN chown -R user:user /vol/
 
-USER user
+# # sets permissions to  the user that can read and write
+# RUN chmod -R 755 /vol/web
+
+# USER user
 # switch to the user
