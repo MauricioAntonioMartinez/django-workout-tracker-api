@@ -87,8 +87,7 @@ class Exercise(models.Model):
     difficulty = models.IntegerField(choices=DIFFICULTY_CHOICES)
     notes = models.TextField(max_length=500, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    exercise = models.CharField(max_length=1,blank=True)
-
+    exercise = models.CharField(max_length=1, blank=True)
 
 
 class BaseSerie(models.Model):
@@ -97,22 +96,27 @@ class BaseSerie(models.Model):
     comment = models.TextField(blank=True)
     rpe = models.IntegerField(default=7,
                               validators=[MinValueValidator(1), MaxValueValidator(10)])
+
     class Meta:
-        abstract= True
+        abstract = True
+
 
 class Serie(BaseSerie):
     father_set = models.ForeignKey(
         'Set', on_delete=models.CASCADE, related_name='series')
 
+
 class SerieRoutine(BaseSerie):
     father_set = models.ForeignKey(
-        'SetRoutine', on_delete=models.CASCADE,related_name='series')
+        'SetRoutine', on_delete=models.CASCADE, related_name='series')
+
 
 class Set(models.Model):
     exercise = models.ForeignKey(
         'Exercise', on_delete=models.CASCADE,)
     work_out = models.ForeignKey(
         'WorkOut', on_delete=models.CASCADE)
+
 
 class SetRoutine(models.Model):
     exercise = models.ForeignKey(
@@ -132,11 +136,10 @@ class Workout(models.Model):
 
 
 class RoutineDay(models.Model):
-    day = models.IntegerField(
-        validators=[MaxValueValidator(7), MinValueValidator(1)])
+    name = models.CharField(max_length=255, blank=True)
     routine = models.ForeignKey(
         'Routine', related_name='routines', on_delete=models.CASCADE)
-    
+
     def sets(self):
         return SetRoutine.objects.filter(routine=self)
 

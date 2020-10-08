@@ -43,6 +43,7 @@ class SetSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         new_series = validated_data.pop('series')
+
         _set = Set.objects.create(**validated_data)
         for serie in new_series:
             Serie.objects.create(father_set=_set, **serie)
