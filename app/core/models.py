@@ -8,9 +8,29 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
+from multiselectfield import MultiSelectField
 # Maneger User class is the class that provides the creation
 # of user or admin and all methods out of the box
+
+
+DIFFICULTY_CHOICES = (
+    (1, 'EASY'),
+    (2, 'NORMAL'),
+    (3, 'HARD'),
+    (4, 'PRO'),
+)
+
+BODY_PART_CHOICES = (
+    (1, 'CHEST'),
+    (2, 'BICEP'),
+    (3, 'CALFS'),
+    (4, 'HASTRINGS'),
+    (5, 'QUADRICEPS'),
+    (6, 'FEMORALS'),
+    (7, 'SHOULDERS'),
+    (8, 'GLUTEUS'),
+    (9, 'BACK'),
+)
 
 
 def recipe_image_file_path(instance, file_name):
@@ -64,26 +84,13 @@ class User(AbstractBaseUser, PermissionsMixin):  # this classes provides
 
 
 class Exercise(models.Model):
-    DIFFICULTY_CHOICES = (
-        (1, 'EASY'),
-        (2, 'NORMAL'),
-        (3, 'HARD'),
-        (4, 'PRO'),
-    )
-
-    BODY_PAT_CHOICES = (
-        (1, 'CHEST'),
-        (2, 'BICEP'),
-        (3, 'CALFS'),
-        (4, 'HASTRINGS'),
-        (5, 'QUADRICEPS'),
-        (6, 'TRICEPS'),
-    )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    body_part = models.IntegerField(choices=BODY_PAT_CHOICES)
+    body_part = MultiSelectField(choices=BODY_PART_CHOICES,
+                                 max_choices=3)
+    # models.IntegerField(choices=BODY_PAT_CHOICES)
     difficulty = models.IntegerField(choices=DIFFICULTY_CHOICES)
     notes = models.TextField(max_length=500, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

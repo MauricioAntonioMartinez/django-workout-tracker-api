@@ -40,11 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'multiselectfield',
     'workout',
     'core',
     'user',
     'exercise',
     'routine',
+    'analytics',
 ]
 
 MIDDLEWARE = [
@@ -133,6 +135,7 @@ STATIC_URL = '/static/'
 # this maps to the public
 MEDIA_URL = '/media/'
 
+ATOMIC_REQUESTS = True
 
 STATIC_ROOT = '/vol/web/static'
 

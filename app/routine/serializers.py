@@ -3,11 +3,6 @@ from rest_framework import serializers
 from exercise.serializers import ExerciseSerializer
 
 
-class AddRoutineWorkout(serializers.Serializer):
-    date = serializers.DateField()
-    name = serializers.CharField(max_length=255, trim_whitespace=True)
-
-
 class SerieSerializer(serializers.ModelSerializer):
     class Meta:
         model = SerieRoutine
@@ -52,7 +47,7 @@ class RoutineDaySerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
-class RoutineDetailSerializer(RoutineDaySerializer):
+class RoutineDayDetailSerializer(RoutineDaySerializer):
     sets = serializers.SerializerMethodField(
         method_name='get_sets')
 
@@ -61,6 +56,20 @@ class RoutineDetailSerializer(RoutineDaySerializer):
         serializer = SetDetailSerializer(SetRoutine.objects.filter(
             routine=instance), many=True)
         return serializer.data
+
+
+class RoutineDetailSerializer(serializers.ModelSerializer):
+    routines = RoutineDayDetailSerializer(many=True)
+
+    class Meta:
+        model = Routine
+        fields = ('id', 'name', 'routines')
+        read_only_fields = ('id',)
+
+
+class AddRoutineWorkout(serializers.Serializer):
+    date = serializers.DateField()
+    sets = SetSerializer(many=True)
 
 
 class RoutineSerializer(serializers.ModelSerializer):
@@ -108,16 +117,3 @@ class RoutineSerializer(serializers.ModelSerializer):
                 for sr in series:
                     SerieRoutine.objects.create(father_set=set_created, **sr)
         return instance
-# TODO: see what the heck is happening here
-
-# !DEPRECATED
-#
-
-
-class RoutineDetailSerializer(RoutineSerializer):
-    routines = RoutineDetailSerializer(many=True)
-
-    class Meta:
-        model = Routine
-        fields = ('id', 'name', 'routines')
-        read_only_fields = ('id',)

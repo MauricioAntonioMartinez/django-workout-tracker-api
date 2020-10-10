@@ -1,28 +1,19 @@
-from core.models import Exercise, Serie, Set, Workout
-from rest_framework import serializers
+from core.models import Exercise, Serie, Set, Workout, BODY_PART_CHOICES
+from rest_framework import serializers, fields
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
-    difficulty_name = serializers.SerializerMethodField(
-        method_name='get_difficulty_name')
-    body_part_name = serializers.SerializerMethodField(
-        method_name='get_body_part_name'
-    )
+
+    body_part = fields.MultipleChoiceField(choices=BODY_PART_CHOICES)
 
     class Meta:
         model = Exercise
         fields = ('id', 'name', 'difficulty', 'notes',
-                  'body_part', 'difficulty_name',  'body_part_name')
-        read_only_fields = ('id', 'difficulty_name', 'body_part_name')
+                  'body_part')
+        read_only_fields = ('id',)
         # extra_kwargs = {
         #     'difficulty': {'write_only': True},
         # }
-
-    def get_difficulty_name(self, instance):
-        return instance.get_difficulty_display()
-
-    def get_body_part_name(self, instance):
-        return instance.get_body_part_display()
 
 
 # class TagSerializer(serializers.ModelSerializer):
