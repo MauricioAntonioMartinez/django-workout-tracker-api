@@ -1,10 +1,11 @@
-from core.models import Routine
+from core.model.routine import Routine
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from core.models import Workout, Set, Serie, Exercise
+from core.model.workout import Workout, Set, Serie
+from core.model.exercise import Exercise
 from django.db import transaction
 
 

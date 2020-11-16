@@ -1,4 +1,6 @@
-from core.models import Exercise, Serie, Set, Workout, BODY_PART_CHOICES
+from core.model.exercise import Exercise
+from core.model.workout import  Serie, Set, Workout
+from app.settings import BODY_PART_CHOICES
 from rest_framework import serializers, fields
 
 

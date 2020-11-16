@@ -5,13 +5,13 @@ services:
     build:
       context: . # to the current directory
     ports:
-      - "9000:9000"
+      - "8000:8000"
     volumes:
       - ./app:/app #map the current directory to the app in the container
     command: >
       sh -c "python manage.py wait_for_db && 
              python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:9000"
+             python manage.py runserver 0.0.0.0:8000"
     environment:
       - DB_HOST=db
       - DB_NAME=app

@@ -1,5 +1,6 @@
 
-from core.models import Exercise, Serie, Set, Workout
+from core.model.exercise import Exercise
+from core.model.workout import  Serie, Set, Workout
 from exercise.serializers import ExerciseSerializer
 from rest_framework import serializers
 

@@ -1,9 +1,11 @@
 import datetime as dt
 from collections.abc import Iterable
 
-from core.models import Exercise, Serie, Set, Workout
+from core.model.exercise import Exercise
+from core.model.workout import Workout,Set,Serie
+from core.models import ExpiringTokenAuthentication
 from rest_framework import filters, generics, mixins, status, viewsets
-from rest_framework.authentication import TokenAuthentication
+
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -13,7 +15,7 @@ from .serializers import ExerciseSerializer
 
 
 class Auth(viewsets.ModelViewSet):
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (ExpiringTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
@@ -24,7 +26,7 @@ class Auth(viewsets.ModelViewSet):
 
 
 class ExerciseSearch(generics.ListAPIView, viewsets.ViewSet):
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (ExpiringTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer

@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext as _
 
-from core import models
+from core.model import exercise,routine,workout
+from .models import User
 
 
 class UserAdmin(BaseUserAdmin):
@@ -31,12 +32,12 @@ class UserAdmin(BaseUserAdmin):
     )
 
 
-admin.site.register(models.User, UserAdmin)
-admin.site.register(models.Exercise)
-admin.site.register(models.Set)
-admin.site.register(models.Workout)
-admin.site.register(models.Serie)
-admin.site.register(models.RoutineDay)
-admin.site.register(models.Routine)
-admin.site.register(models.SetRoutine)
-admin.site.register(models.SerieRoutine)
+admin.site.register(User, UserAdmin)
+admin.site.register(exercise.Exercise)
+admin.site.register(workout.Set)
+admin.site.register(workout.Workout)
+admin.site.register(workout.Serie)
+admin.site.register(routine.RoutineDay)
+admin.site.register(routine.Routine)
+admin.site.register(routine.SetRoutine)
+admin.site.register(routine.SerieRoutine)

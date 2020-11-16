@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 from pathlib import Path
-
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,9 +26,30 @@ SECRET_KEY = 'ucu=w1b*oq@h0d0jcvpr0ya#m5$2bpzh=0*#5z(&v3fh1x-4+7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+DIFFICULTY_CHOICES = (
+    (1, 'EASY'),
+    (2, 'NORMAL'),
+    (3, 'HARD'),
+    (4, 'PRO'),
+)
+
+BODY_PART_CHOICES = (
+    (1, 'CHEST'),
+    (2, 'BICEP'),
+    (3, 'CALFS'),
+    (4, 'HASTRINGS'),
+    (5, 'QUADRICEPS'),
+    (6, 'FEMORALS'),
+    (7, 'SHOULDERS'),
+    (8, 'GLUTEUS'),
+    (9, 'BACK'),
+)
 
 
+
+ALLOWED_HOSTS = ['0.0.0.0','177.240.142.82','10.0.2.2']
+
+TOKEN_TIME_OUT = timedelta(hours=1)
 # Application definition
 
 INSTALLED_APPS = [

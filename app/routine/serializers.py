@@ -1,4 +1,6 @@
-from core.models import Exercise, Routine, RoutineDay, SetRoutine, SerieRoutine, Serie
+from core.model.exercise import Exercise
+from core.model.workout import  Serie
+from core.model.routine import  Routine, RoutineDay, SetRoutine, SerieRoutine
 from rest_framework import serializers
 from exercise.serializers import ExerciseSerializer
 

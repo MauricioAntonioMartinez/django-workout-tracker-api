@@ -56,6 +56,11 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
+
+
+
+
+
 class AuthSerializer(serializers.Serializer):
     """Serializer for the user authentication token
     """

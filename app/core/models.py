@@ -9,47 +9,17 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from multiselectfield import MultiSelectField
-# Maneger User class is the class that provides the creation
-# of user or admin and all methods out of the box
+from user.custom_token import ExpiringToken
+from rest_framework import exceptions
+from rest_framework.authentication import TokenAuthentication
 
 
-DIFFICULTY_CHOICES = (
-    (1, 'EASY'),
-    (2, 'NORMAL'),
-    (3, 'HARD'),
-    (4, 'PRO'),
-)
-
-BODY_PART_CHOICES = (
-    (1, 'CHEST'),
-    (2, 'BICEP'),
-    (3, 'CALFS'),
-    (4, 'HASTRINGS'),
-    (5, 'QUADRICEPS'),
-    (6, 'FEMORALS'),
-    (7, 'SHOULDERS'),
-    (8, 'GLUTEUS'),
-    (9, 'BACK'),
-)
-
-
-def recipe_image_file_path(instance, file_name):
-    """Generate file path for new recipe image
-
-    Args:
-        instance : instance of the current session
-        file_name (str): file name with the extension
-    """
-    ext = file_name.split('.')[-1]  # the last item
-    filename = f'{uuid.uuid4()}.{ext}'
-    return os.path.join('uploads/recipe/', filename)
 
 
 class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **kargs):
         """Creates and saves a new user
-
         Args:
             email ([type]): [description]
             password ([type], optional): [description]. Defaults to None.
@@ -83,75 +53,22 @@ class User(AbstractBaseUser, PermissionsMixin):  # this classes provides
     USERNAME_FIELD = 'email'
 
 
-class Exercise(models.Model):
+class ExpiringTokenAuthentication(TokenAuthentication):
+    """Overwrites the normal rest framework auth token model"""
+    model = ExpiringToken
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    body_part = MultiSelectField(choices=BODY_PART_CHOICES,
-                                 max_choices=3)
-    # models.IntegerField(choices=BODY_PAT_CHOICES)
-    difficulty = models.IntegerField(choices=DIFFICULTY_CHOICES)
-    notes = models.TextField(max_length=500, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    exercise = models.CharField(max_length=1, blank=True)
+    def authenticate_credentials(self, key):
+        """Middleware in charge to validate the given token"""
+        try:
+            token = self.model.objects.get(key=key)
+        except self.model.DoesNotExist:
+            raise exceptions.AuthenticationFailed('Invalid Token')
 
+        if not token.user.is_active:
+            raise exceptions.AuthenticationFailed('User inactive or deleted')
 
-class BaseSerie(models.Model):
-    reps = models.IntegerField(default=0)
-    weight = models.FloatField(default=0.0)
-    comment = models.TextField(blank=True)
-    rpe = models.IntegerField(default=7,
-                              validators=[MinValueValidator(1), MaxValueValidator(10)])
+        if token.expired():
+            raise exceptions.AuthenticationFailed('Token has expired')
 
-    class Meta:
-        abstract = True
+        return (token.user, token)
 
-
-class Serie(BaseSerie):
-    father_set = models.ForeignKey(
-        'Set', on_delete=models.CASCADE, related_name='series')
-
-
-class SerieRoutine(BaseSerie):
-    father_set = models.ForeignKey(
-        'SetRoutine', on_delete=models.CASCADE, related_name='series')
-
-
-class Set(models.Model):
-    exercise = models.ForeignKey(
-        'Exercise', on_delete=models.CASCADE,)
-    work_out = models.ForeignKey(
-        'WorkOut', on_delete=models.CASCADE)
-
-
-class SetRoutine(models.Model):
-    exercise = models.ForeignKey(
-        'Exercise', on_delete=models.CASCADE)
-    routine = models.ForeignKey(
-        'RoutineDay', on_delete=models.CASCADE)
-
-
-class Workout(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
-    workout_date = models.DateField()
-    sets = models.ManyToManyField('Exercise', through=Set, blank=True)
-
-    class Meta:
-        ordering = ['workout_date']
-
-
-class RoutineDay(models.Model):
-    name = models.CharField(max_length=255, blank=True)
-    routine = models.ForeignKey(
-        'Routine', related_name='routines', on_delete=models.CASCADE)
-
-    def sets(self):
-        return SetRoutine.objects.filter(routine=self)
-
-
-class Routine(models.Model):
-    name = models.CharField(max_length=255)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)

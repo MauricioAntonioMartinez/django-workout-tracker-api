@@ -1,8 +1,8 @@
 
 import datetime as dt
 from collections.abc import Iterable
+from core.model.workout import  Serie, Set, Workout
 
-from core.models import Serie, Set, Workout
 from exercise.views import Auth
 from rest_framework import mixins, viewsets
 from rest_framework.authentication import TokenAuthentication
@@ -59,10 +59,12 @@ class SetViewSet(mixins.CreateModelMixin,
     def _get_workout(self, date, creation=True):
         try:
             real_date = dt.datetime.strptime(date, '%Y-%m-%d')
+            
             return Workout.objects.get(
                 workout_date=real_date, user=self.request.user)
         except Workout.DoesNotExist:
             if creation:
+                # print(real_date)
                 return Workout.objects.create(workout_date=real_date,
                                               user=self.request.user)
             return False
@@ -72,6 +74,7 @@ class SetViewSet(mixins.CreateModelMixin,
     def perform_create(self, serializer):
         date = self.request.query_params.get('date')
         exercise = serializer.validated_data['exercise']
+        
         work_out = self._get_workout(date)
         if (not work_out) or (exercise.user != self.request.user):
             raise ValidationError('Permission Error')
