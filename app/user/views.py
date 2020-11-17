@@ -2,7 +2,7 @@ from rest_framework import authentication, exceptions, generics, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 from rest_framework.response import Response
-
+from rest_framework import status
 from .serializers import AuthSerializer, UserSerializer
 from .custom_token import ExpiringToken
 
@@ -38,9 +38,12 @@ class CreateAuthView(ObtainAuthToken):
 
             data = {'token': token.key}
             return Response(data)
-        
+        print(serializer.errors)
 
-
+        return Response(
+            {"detail": "Cannot authenticate"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class ManageUserView(generics.RetrieveUpdateAPIView):

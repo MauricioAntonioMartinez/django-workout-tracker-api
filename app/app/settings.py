@@ -35,21 +35,21 @@ DIFFICULTY_CHOICES = (
 
 BODY_PART_CHOICES = (
     (1, 'CHEST'),
-    (2, 'BICEP'),
-    (3, 'CALFS'),
-    (4, 'HASTRINGS'),
-    (5, 'QUADRICEPS'),
-    (6, 'FEMORALS'),
+    (2, 'LEGS'),
+    (3, 'ARMS'),
+    (4, 'CALFS'),
+    (5, 'HASTRINGS'),
+    (6, 'QUADRICEPS'),
     (7, 'SHOULDERS'),
     (8, 'GLUTEUS'),
     (9, 'BACK'),
+    (10, 'ABS'),
 )
 
 
+ALLOWED_HOSTS = ['0.0.0.0/0', 'localhost', '177.240.142.82', '10.0.2.2']
 
-ALLOWED_HOSTS = ['0.0.0.0','177.240.142.82','10.0.2.2']
-
-TOKEN_TIME_OUT = timedelta(hours=1)
+TOKEN_TIME_OUT = timedelta(days=1)
 # Application definition
 
 INSTALLED_APPS = [

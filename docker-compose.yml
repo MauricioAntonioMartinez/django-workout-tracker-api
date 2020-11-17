@@ -26,3 +26,8 @@ services:
       - POSTGRES_DB=app
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=maotrix1
+    volumes:
+      - tracktion-data:/var/lib/postgresql/data
+
+volumes:
+  tracktion-data:
